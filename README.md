@@ -141,7 +141,7 @@ SorryYahooFinance::GETによって作られるSorryYahooFinance::Infoについ�
 
 
 
-```rb
+```ruby:ex5.rb
 info = SorryYahooFinance::GET(8411)
 
 info.values
@@ -167,7 +167,7 @@ info.values
 
 SorryYahooFinance::Info#market などでそれぞれの情報
 
-```rb
+```ruby:ex6.rb
 info.market
 => "東証1部"
 ```
@@ -175,7 +175,7 @@ info.market
 
 SorryYahooFinance::Info#formalize_values でvaluesの各値をFixnumやRangeにしたものを返す。
 
-```rb
+```ruby:ex7.rb
 info.formalize_values
 => {:code=>8411,
  :name=>"(株)みずほフィナンシャルグループ",
