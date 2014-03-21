@@ -1,83 +1,124 @@
 SorryYahooFinance README
 =============
 
-I'll be pulling the stock of information from Yahoo! Finance. I am sorry. Yahoo!
+株式の情報取得するGem作ったよ！
 
-Update Info
+# 2014/2/21 アップデートしたよ！
+--------
+
+https://github.com/gogotanaka/sorry_yahoo_finance
+
+https://rubygems.org/gems/sorry_yahoo_finance
+
+株式の各種データをひっぱってきたいと思い、Gemを探したが以外となかったので作ってみた。
+
+Yahoo!Japanファイナンス（http://finance.yahoo.co.jp/）
+
+から株の情報をひっぱてきます。ごめんなさい。Yahoo!
+
+今の所
+
+* 証券コード
+* 市場
+* 業種
+* 株価
+* 前日終値
+* 始値
+* 高値
+* 安値
+* 出来高
+* 売買代金
+* 値幅制限
+* 信用買残
+* 信用買残前週比
+* 信用売残
+* 信用売残前週比
+* 貸借倍率
+
+を取ってきます。余裕があったらもっと増やします。
+
+更新履歴
 --------
 * 0.1.0 (2014-02-15)
-  * I was in shape once.
+  * 一応形にした
 
-Example
+* 0.2.0 (2014-02-20)
+  * いい感じにした
+例
 --------
 
-I will pull the information of the stock by securities code.
+https://github.com/gogotanaka/sorry_yahoo_finance
+
+### 証券コードと日付を引数に該当する株式の情報をひっぱってくる。
+
+日付は省略可能
 
 ```ruby:ex1.rb
-SorryYahooFinance.get_from_code(3333)
-=> {:code=>3333,
-  :name=>"(株)あさひ",
-  :market=>"東証1部",
-  :industry=>"小売業",
-  :price=>"1,308",
-  :previousprice=>"1,321",
-  :opening=>"1,326",
-  :high=>"1,331",
-  :low=>"1,302",
-  :turnover=>"95,700",
-  :trading_volume=>"125,686",
-  :price_limit=>"1,021～1,621",
-  :margin_buying=>"174,700",
-  :margin_selling=>"135,400",
-  :d_margin_buying=>"-7,800",
-  :d_margin_selling=>"-39,300",
-  :margin_rate=>"1.29",
-  :chart_image=>"http://gchart.yahoo.co.jp/f?s=3333.T"}
+SorryYahooFinance::GET(8058, Date.new(2008, 9, 15))
+=> #<SorryYahooFinance::GET:0x007fcb36260030>
+
+SorryYahooFinance::GET(8606)
+=> #<SorryYahooFinance::GET:0x007fcb2b6d53c8>
 ```
 
-Multiple possible.
+ちなみに SorryYahooFinance が長過ぎて無理な人のために Stock というエイリアスを張ってある。
+
+```ruby:ex1.rb
+Stock::GET(8058, Date.new(2008, 9, 15))
+=> #<SorryYahooFinance::GET:0x007fcb36260030>
+
+Stock::GET(8606)
+=> #<SorryYahooFinance::GET:0x007fcb2b6d53c8>
+```
+
+SorryYahooFinance::GET#values　で株情報をhash形式で
+
+```rb
+SorryYahooFinance::GET(8411).values
+=> {:code=>"8411",
+ :name=>"(株)みずほフィナンシャルグループ",
+ :market=>"東証1部",
+ :industry=>"銀行業",
+ :price=>"212",
+ :previousprice=>"218",
+ :opening=>"218",
+ :high=>"218",
+ :low=>"211",
+ :turnover=>"197,084,500",
+ :trading_volume=>"42,334,350",
+ :price_limit=>"138～298",
+ :margin_buying=>"320,352,600",
+ :margin_selling=>"13,355,900",
+ :d_margin_buying=>"+15,929,300",
+ :d_margin_selling=>"-4,316,500",
+ :margin_rate=>"23.99",
+ :chart_image=>"http://gchart.yahoo.co.jp/f?s=8411.T"}
+```
+
+SorryYahooFinance::GET#market などでそれぞれの情報
+
+```rb
+SorryYahooFinance::GET(3333).market
+=> "東証1部"
+```
+
+一応、複数も
 
 ```ruby:ex2.rb
-SorryYahooFinance.get_from_codes([3333,4355])
-=> [{:code=>3333,
-  :name=>"(株)あさひ",
-  :market=>"東証1部",
-  :industry=>"小売業",
-  :price=>"1,308",
-  :previousprice=>"1,321",
-  :opening=>"1,326",
-  :high=>"1,331",
-  :low=>"1,302",
-  :turnover=>"95,700",
-  :trading_volume=>"125,686",
-  :price_limit=>"1,021～1,621",
-  :margin_buying=>"174,700",
-  :margin_selling=>"135,400",
-  :d_margin_buying=>"-7,800",
-  :d_margin_selling=>"-39,300",
-  :margin_rate=>"1.29",
-  :chart_image=>"http://gchart.yahoo.co.jp/f?s=3333.T"},
- {:code=>4355,
-  :name=>"ロングライフホールディング(株)",
-  :market=>"東証JQS",
-  :industry=>"サービス業",
-  :price=>"307",
-  :previousprice=>"313",
-  :opening=>"312",
-  :high=>"312",
-  :low=>"303",
-  :turnover=>"21,600",
-  :trading_volume=>"6,674",
-  ........（略)
+SorryYahooFinance::GET.get_by_codes([8606,8058])
+=> [#<SorryYahooFinance::GET:0x007fcb2e4816a0>, #<SorryYahooFinance::GET:0x007fcb30a17e78>
+
 ```
 
-All of the shares.
+全株式もとって来れる（http://www.tse.or.jp/market/data/listed_companies/)
+全株式の指す所はこのあたり参照
+
+を取ってくる
 
 ```ruby:ex3.rb
-SorryYahooFinance.get_all
+SorryYahooFinance::GET.get_all
 => .....(略)
 ```
-
 
 LICENSE
 -------
