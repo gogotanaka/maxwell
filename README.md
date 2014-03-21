@@ -1,9 +1,6 @@
-SorryYahooFinance README
-=============
+S株式の情報取得するGem作ったよ！
 
-株式の情報取得するGem作ったよ！
-
-# 2014/2/21 アップデートしたよ！
+# 2014/3/21 アップデートしたよ！
 --------
 
 https://github.com/gogotanaka/sorry_yahoo_finance
@@ -44,37 +41,110 @@ Yahoo!Japanファイナンス（http://finance.yahoo.co.jp/）
 
 * 0.2.0 (2014-02-20)
   * いい感じにした
+* 0.3.0 (2014-03-21)
+  * もっといい感じにした
+
+
 例
 --------
 
 https://github.com/gogotanaka/sorry_yahoo_finance
 
-### 証券コードと日付を引数に該当する株式の情報をひっぱってくる。
+#SorryYahooFinance::GET
 
-日付は省略可能
+### 証券コードと日付を引数に SorryYahooFinance::Info のオブジェクト(該当株式の情報）の配列またはそれ自身を返す。
+
+証券コードのみ指定した場合はその時点での情報をとってくる。
+
+日付の渡し方は２パターン用意してある。
 
 ```ruby:ex1.rb
-SorryYahooFinance::GET(8058, Date.new(2008, 9, 15))
-=> #<SorryYahooFinance::GET:0x007fcb36260030>
+SorryYahooFinance::GET(8058)
+=> #<SorryYahooFinance::Info:0x007ff7db73cfa0
+ @values=
+  {:code=>"8058",
+   :name=>"三菱商事(株)",
+   :market=>"東証1部 ",
+   :industry=>"卸売業",
+   :price=>"1,863",
+   :previousprice=>"1,876",
+   :opening=>"1,880",
+   :high=>"1,893",
+   :low=>"1,860",
+   :turnover=>"7,359,200",
+   :trading_volume=>"13,763,108",
+   :price_limit=>"1,476～2,276",
+   :margin_buying=>"6,763,500",
+   :margin_selling=>"307,400",
+   :d_margin_buying=>"+885,500",
+   :d_margin_selling=>"-181,100",
+   :margin_rate=>"22",
+   :chart_image=>"http://gchart.yahoo.co.jp/f?s=8058.T"}>
 
-SorryYahooFinance::GET(8606)
-=> #<SorryYahooFinance::GET:0x007fcb2b6d53c8>
+
+
+SorryYahooFinance::GET(8606, Date(2014, 3, 20))
+=> #<SorryYahooFinance::Info:0x007fcb2b6d53c8 ...
+
+
+SorryYahooFinance::GET(8058, 2014, 3, 20)
+=> #<SorryYahooFinance::Info:0x007fcb36260030 ...
+
 ```
+
 
 ちなみに SorryYahooFinance が長過ぎて無理な人のために Stock というエイリアスを張ってある。
 
-```ruby:ex1.rb
+```ruby:ex2.rb
 Stock::GET(8058, Date.new(2008, 9, 15))
-=> #<SorryYahooFinance::GET:0x007fcb36260030>
+=> #<SorryYahooFinance::Info:0x007fcb36260030>
 
 Stock::GET(8606)
-=> #<SorryYahooFinance::GET:0x007fcb2b6d53c8>
+=> #<SorryYahooFinance::Info:0x007fcb2b6d53c8>
 ```
 
-SorryYahooFinance::GET#values　で株情報をhash形式で
+
+証券コードを複数渡した場合はSorryYahooFinance::Infoオブジェクトの配列を返す。
+
+```ruby:ex3.rb
+SorryYahooFinance::GET.get_by_codes([8606,8058])
+=> [#<SorryYahooFinance::Info:0x007fcb2e4816a0 ...>, #<SorryYahooFinance::Info:0x007fcb30a17e78 ... >]
+
+
+SorryYahooFinance::GET.get_by_codes([8606,8058], Date(2014, 3, 20))
+=> [#<SorryYahooFinance::Info:0x007fcb2e4816a0 ...>, #<SorryYahooFinance::Info:0x007fcb30a17e78 ... >]
+
+
+SorryYahooFinance::GET.get_by_codes([8606,8058], 2014, 3, 20)
+=> [#<SorryYahooFinance::Info:0x007fcb2e4816a0 ...>, #<SorryYahooFinance::Info:0x007fcb30a17e78 ... >]
+
+
+```
+
+証券コード、その配列の代わりに:allというシンボルを渡せば全株式のSorryYahooFinance::Infoオブジェクトを取ってくる。
+
+全株式の指すところはこのあたり参照
+
+（http://www.tse.or.jp/market/data/listed_companies/)
+
+```ruby:ex4.rb
+SorryYahooFinance::GET.get_by_codes(:all)
+=> .....(略)
+```
+
+
+
+
+# SorryYahooFinance::Infoクラスのあれこれ
+
+SorryYahooFinance::GETによって作られるSorryYahooFinance::Infoについて
+
+
 
 ```rb
-SorryYahooFinance::GET(8411).values
+info = SorryYahooFinance::GET(8411)
+
+info.values
 => {:code=>"8411",
  :name=>"(株)みずほフィナンシャルグループ",
  :market=>"東証1部",
@@ -95,29 +165,36 @@ SorryYahooFinance::GET(8411).values
  :chart_image=>"http://gchart.yahoo.co.jp/f?s=8411.T"}
 ```
 
-SorryYahooFinance::GET#market などでそれぞれの情報
+SorryYahooFinance::Info#market などでそれぞれの情報
 
 ```rb
-SorryYahooFinance::GET(3333).market
+info.market
 => "東証1部"
 ```
 
-一応、複数も
 
-```ruby:ex2.rb
-SorryYahooFinance::GET.get_by_codes([8606,8058])
-=> [#<SorryYahooFinance::GET:0x007fcb2e4816a0>, #<SorryYahooFinance::GET:0x007fcb30a17e78>
+SorryYahooFinance::Info#formalize_values でvaluesの各値をFixnumやRangeにしたものを返す。
 
-```
-
-全株式もとって来れる（http://www.tse.or.jp/market/data/listed_companies/)
-全株式の指す所はこのあたり参照
-
-を取ってくる
-
-```ruby:ex3.rb
-SorryYahooFinance::GET.get_all
-=> .....(略)
+```rb
+info.formalize_values
+=> {:code=>8411,
+ :name=>"(株)みずほフィナンシャルグループ",
+ :market=>"東証1部",
+ :industry=>"銀行業",
+ :price=>201,
+ :previousprice=>203,
+ :opening=>203,
+ :high=>204,
+ :low=>200,
+ :turnover=>111785700,
+ :trading_volume=>22552224,
+ :price_limit=>123..283,
+ :margin_buying=>370732000,
+ :margin_selling=>7085000,
+ :d_margin_buying=>36113200,
+ :d_margin_selling=>-962200,
+ :margin_rate=>52.33,
+ :chart_image=>"http://gchart.yahoo.co.jp/f?s=8411.T"}
 ```
 
 LICENSE
