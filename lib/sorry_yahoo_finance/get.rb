@@ -1,15 +1,8 @@
-require 'all_stock_codes'
-require 'converter'
-require 'hash_accessor'
-
+require 'utils/all_stock_codes'
+require 'utils/converter'
+require 'utils/hash_accessor'
+require 'utils/extended_hash'
 module SorryYahooFinance
-  class Hash
-    def map_to_hash &block
-      ret = {}
-      each { |k,v| ret[k] = block.call(k,v) }
-      ret
-    end
-  end
   class GET
     extend HashAccessor
     hash_accessor :values, :code, :name, :market, :industry, :price, :previousprice, :opening, :high, :low, :turnover, :trading_volume, :price_limit, :margin_buying, :margin_selling, :d_margin_buying, :d_margin_selling, :margin_rate, :chart_image
@@ -101,7 +94,7 @@ module SorryYahooFinance
       @values[:price_limit] = Range.new($1.to_i,$2.to_i)
     end
 
-    def formalize_values
+    def to_integer
       int_keys = [
         :code,
         :price,
@@ -124,9 +117,14 @@ module SorryYahooFinance
           v
         end
       end
+    end
+
+    def formalize_values
+      to_integer
       to_range
       @values[:margin_rate] = @values[:margin_rate].to_f
     end
+
   end
 end
 Stock = SorryYahooFinance
