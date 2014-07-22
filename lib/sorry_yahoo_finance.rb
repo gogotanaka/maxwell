@@ -8,20 +8,21 @@ require 'utils/extended_hash'
 module SorryYahooFinance
   class << self
 
-    def GET(code_or_codes_or_all, date_or_year=nil, month=nil, day=nil)
+    def GET(code_or_codes_or_sym, date_or_year=nil, month=nil, day=nil)
       date     = build_date(date_or_year, month, day)
-      code_ary = build_code_ary(code_or_codes_or_all)
+      code_ary = build_code_ary(code_or_codes_or_sym)
 
-      SorryYahooFinance::GET.code_ary_and_date(code_ary, date)
+      SorryYahooFinance::GET.execute(code_ary, date)
     end
 
-    def build_code_ary(code_or_codes_or_all)
-      if code_or_codes_or_all == :all
+    def build_code_ary(code_or_codes_or_sym)
+      case code_or_codes_or_sym
+      when :all
         AllStockCodes::CODES
-      elsif code_or_codes_or_all.is_a? Array
-        code_or_codes_or_all
+      when Array
+        code_or_codes_or_sym
       else
-        [code_or_codes_or_all]
+        [code_or_codes_or_sym]
       end
     end
 
@@ -36,7 +37,7 @@ module SorryYahooFinance
   end
 
   module GET
-    def code_ary_and_date(code_ary, date)
+    def execute(code_ary, date)
       infos = code_ary.map do |code|
         SorryYahooFinance::Info.new(code, date)
       end
@@ -44,7 +45,7 @@ module SorryYahooFinance
       infos.count == 1 ? infos.first : infos
     end
 
-    module_function :code_ary_and_date
+    module_function :execute
   end
 
 end
