@@ -107,15 +107,15 @@ Stock::GET(8606)
 証券コードを複数渡した場合はSorryYahooFinance::Infoオブジェクトの配列を返す。
 
 ```ruby:ex3.rb
-SorryYahooFinance::GET.get_by_codes([8606,8058])
+SorryYahooFinance::GET([8606,8058])
 => [#<SorryYahooFinance::Info:0x007fcb2e4816a0 ...>, #<SorryYahooFinance::Info:0x007fcb30a17e78 ... >]
 
 
-SorryYahooFinance::GET.get_by_codes([8606,8058], Date(2014, 3, 20))
+SorryYahooFinance::GET([8606,8058], Date.new(2014, 3, 20))
 => [#<SorryYahooFinance::Info:0x007fcb2e4816a0 ...>, #<SorryYahooFinance::Info:0x007fcb30a17e78 ... >]
 
 
-SorryYahooFinance::GET.get_by_codes([8606,8058], 2014, 3, 20)
+SorryYahooFinance::GET([8606,8058], 2014, 3, 20)
 => [#<SorryYahooFinance::Info:0x007fcb2e4816a0 ...>, #<SorryYahooFinance::Info:0x007fcb30a17e78 ... >]
 
 
@@ -128,7 +128,7 @@ SorryYahooFinance::GET.get_by_codes([8606,8058], 2014, 3, 20)
 （http://www.tse.or.jp/market/data/listed_companies/)
 
 ```ruby:ex4.rb
-SorryYahooFinance::GET.get_by_codes(:all)
+SorryYahooFinance::GET(:all)
 => .....(略)
 ```
 
