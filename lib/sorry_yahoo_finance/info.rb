@@ -1,7 +1,5 @@
-require 'utils/all_stock_codes'
 require 'utils/converter'
 require 'utils/hash_accessor'
-require 'utils/extended_hash'
 
 module SorryYahooFinance
   class Info
@@ -12,11 +10,7 @@ module SorryYahooFinance
     def initialize(code, date=nil)
       if code.class == Fixnum && code.to_s.size == 4
         begin
-          @values = if date
-            infos_with_date(code, date)
-          else
-            infos(code)
-          end
+          @values = date ? infos_with_date(code, date) : infos(code)
         rescue => ex
           raise "code #{code} stock dont exist. #{ex}"
         end
@@ -48,11 +42,10 @@ module SorryYahooFinance
         :d_margin_selling,
         :finish
       ]
-      return_values = return_values.map_to_hash do |k,v|
-        if int_keys.include?(k) && v.class == String
-          v.delete(",").to_i
-        else
-          v
+
+      int_keys.each do |key|
+        if return_values[key].class == String
+          return_values[key] = return_values[key].delete(",").to_i
         end
       end
 
