@@ -1,7 +1,7 @@
 require 'open-uri'
 require 'nokogiri'
 module Converter
-  def do(url)
+  def execute(url)
     begin
       html = open(url).read
     rescue URI::InvalidURIError
@@ -16,5 +16,5 @@ module Converter
     end
     doc = Nokogiri::HTML(html, url)
   end
-  module_function :do
+  module_function :execute
 end
