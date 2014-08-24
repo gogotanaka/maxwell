@@ -1,8 +1,26 @@
 require 'utils/converter'
 require 'utils/hash_accessor'
 
+require 'yaml'
+
 module SorryYahooFinance
   class Info
+    INT_KEYS = [
+      :code,
+      :price,
+      :previousprice,
+      :opening,
+      :high,
+      :low,
+      :turnover,
+      :trading_volume,
+      :margin_buying,
+      :margin_selling,
+      :d_margin_buying,
+      :d_margin_selling,
+      :finish
+    ]
+
     extend HashAccessor
     hash_accessor :values, :code, :name, :market, :industry, :price, :previousprice, :opening, :high, :low, :turnover, :trading_volume, :price_limit, :margin_buying, :margin_selling, :d_margin_buying, :d_margin_selling, :margin_rate, :chart_image
 
@@ -23,27 +41,16 @@ module SorryYahooFinance
       @values
     end
 
+    def ja_values
+      Hash[
+        @values.to_a.map { |ary| [ja_rabels[ary[0]], ary[1]] }
+      ]
+    end
+
     def formalize_values
       return_values = @values
 
-      # to_integer
-      int_keys = [
-        :code,
-        :price,
-        :previousprice,
-        :opening,
-        :high,
-        :low,
-        :turnover,
-        :trading_volume,
-        :margin_buying,
-        :margin_selling,
-        :d_margin_buying,
-        :d_margin_selling,
-        :finish
-      ]
-
-      int_keys.each do |key|
+      INT_KEYS.each do |key|
         if return_values[key].class == String
           return_values[key] = return_values[key].delete(",").to_i
         end
@@ -69,7 +76,7 @@ module SorryYahooFinance
         previousprice, opening, high, low, turnover, trading_volume, price_limit = html.css('div.innerDate dd').map{|x| x.css('strong').inner_text }
         margin_deal = html.css("div.ymuiDotLine div.yjMS dd.ymuiEditLink strong").map(&:text)
         {
-          code:             html.css("div#divAddPortfolio + dl dt").text,
+          code:             code,
           name:             html.css('table.stocksTable th.symbol h1').inner_text,
           market:           html.css('div.stocksDtlWp dd')[0].content,
           industry:         html.css("div.stocksDtl dd.category a").text,
@@ -105,6 +112,10 @@ module SorryYahooFinance
           low:      low,
           finish:   finish
         }
+      end
+
+      def ja_rabels
+        YAML.load_file('lib/utils/ja.yml').inject({}){|memo,(k,v)| memo[k.to_sym] = v; memo}
       end
 
       def yahoo_url(code)

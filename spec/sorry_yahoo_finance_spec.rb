@@ -1,5 +1,5 @@
 require 'spec_helper'
-
+require 'pry'
 describe SorryYahooFinance do
 
   it 'should have a version number' do
@@ -33,5 +33,6 @@ describe SorryYahooFinance do
   describe 'Info' do
     subject { SorryYahooFinance::GET(8058) }
     specify { expect(subject.formalize_values).to be_a(Hash) }
+    specify { expect(subject.ja_values).to be_a(Hash) }
   end
 end
