@@ -52,20 +52,29 @@ module SorryYahooFinance
 
       INT_KEYS.each do |key|
         if return_values[key].class == String
-          return_values[key] = return_values[key].delete(",").to_i
+          return_values[key] = return_values[key].to_int
         end
       end
 
       # to_range(str is like 183〜201)
-      price_limit = return_values[:price_limit]
-      price_limit.delete!(",")
-      price_limit =~ /(\d+)～(\d+)/
-      return_values[:price_limit] = Range.new($1.to_i,$2.to_i)
+      return_values[:price_limit] = return_values[:price_limit].to_range
 
       # to_f
       return_values[:margin_rate] = return_values[:margin_rate].to_f
 
       return_values
+    end
+
+    class ::String
+      def to_int
+        delete(",").to_i
+      end
+
+      def to_range
+        delete!(",")
+        self =~ /(\d+)～(\d+)/
+        Range.new($1.to_i,$2.to_i)
+      end
     end
 
     private
@@ -115,7 +124,27 @@ module SorryYahooFinance
       end
 
       def ja_rabels
-        YAML.load_file('lib/utils/ja.yml').inject({}){|memo,(k,v)| memo[k.to_sym] = v; memo}
+        # YAML.load_file('lib/utils/ja.yml').inject({}){|memo,(k,v)| memo[k.to_sym] = v; memo}
+        {
+          :code=>"証券コード",
+          :name=>"銘柄名",
+          :market=>"取引市場",
+          :industry=>"業種",
+          :price=>"株価",
+          :previousprice=>"前日終値",
+          :opening=>"証券コード",
+          :high=>"高値",
+          :low=>"安値",
+          :turnover=>"出来高",
+          :trading_volume=>"売買代金",
+          :price_limit=>"値幅制限",
+          :margin_buying=>"信用買残",
+          :margin_selling=>"信用売残",
+          :d_margin_buying=>"信用買残前週比",
+          :d_margin_selling=>"信用売残前週比",
+          :margin_rate=>"貸借倍率",
+          :chart_image=>"チャート図"
+        }
       end
 
       def yahoo_url(code)
