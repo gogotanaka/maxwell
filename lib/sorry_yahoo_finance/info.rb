@@ -22,7 +22,7 @@ module SorryYahooFinance
     ]
 
     extend HashAccessor
-    hash_accessor :values, :code, :name, :market, :industry, :price, :previousprice, :opening, :high, :low, :turnover, :trading_volume, :price_limit, :margin_buying, :margin_selling, :d_margin_buying, :d_margin_selling, :margin_rate, :chart_image
+    hash_accessor :values, :code, :name, :market, :industry, :price, :previousprice, :opening, :high, :low, :turnover, :trading_volume, :price_limit, :margin_buying, :margin_selling, :d_margin_buying, :d_margin_selling, :margin_rate, :capitalization, :shares_outstanding, :dividend_yield, :dps, :per, :pbr, :eps, :bps, :minimum_purchase, :share_unit, :yearly_high, :yearly_low, :chart_image
 
     # TODO: 休場の時はアラート出したい
     def initialize(code, date=nil)
@@ -52,7 +52,7 @@ module SorryYahooFinance
 
       INT_KEYS.each do |key|
         if return_values[key].class == String
-          return_values[key] = return_values[key].to_int
+          return_values[key] = return_values[key].delete(",").to_i
         end
       end
 
@@ -66,10 +66,6 @@ module SorryYahooFinance
     end
 
     class ::String
-      def to_int
-        delete(",").to_i
-      end
-
       def to_range
         delete!(",")
         self =~ /(\d+)～(\d+)/
@@ -84,25 +80,40 @@ module SorryYahooFinance
         html = Converter.execute(url)
         previousprice, opening, high, low, turnover, trading_volume, price_limit = html.css('div.innerDate dd').map{|x| x.css('strong').inner_text }
         margin_deal = html.css("div.ymuiDotLine div.yjMS dd.ymuiEditLink strong").map(&:text)
+        html.css('div#main div.main2colR div.chartFinance div.lineFi dl').map { |dl| dl.css('dd strong').text }
+        capitalization, shares_outstanding, dividend_yield, dps, per, pbr, eps, bps, minimum_purchase, share_unit, yearly_high, yearly_low = html.css('div#main div.main2colR div.chartFinance div.lineFi dl').map { |dl| dl.css('dd strong').text }
+
         {
-          code:             code,
-          name:             html.css('table.stocksTable th.symbol h1').inner_text,
-          market:           html.css('div.stocksDtlWp dd')[0].content,
-          industry:         html.css("div.stocksDtl dd.category a").text,
-          price:            html.css('table.stocksTable td.stoksPrice')[1].content,
-          previousprice:    previousprice,
-          opening:          opening,
-          high:             high,
-          low:              low,
-          turnover:         turnover,
-          trading_volume:   trading_volume,
-          price_limit:      price_limit,
-          margin_buying:    margin_deal[0],
-          margin_selling:   margin_deal[3],
-          d_margin_buying:  margin_deal[1],
-          d_margin_selling: margin_deal[4],
-          margin_rate:      margin_deal[2],
-          chart_image:      html.css("div.styleChart img")[0][:src],
+          code:               code,
+          name:               html.css('table.stocksTable th.symbol h1').inner_text,
+          market:             html.css('div.stocksDtlWp dd')[0].content,
+          industry:           html.css("div.stocksDtl dd.category a").text,
+          price:              html.css('table.stocksTable td.stoksPrice')[1].content,
+          previousprice:      previousprice,
+          opening:            opening,
+          high:               high,
+          low:                low,
+          turnover:           turnover,
+          trading_volume:     trading_volume,
+          price_limit:        price_limit,
+          margin_buying:      margin_deal[0],
+          margin_selling:     margin_deal[3],
+          d_margin_buying:    margin_deal[1],
+          d_margin_selling:   margin_deal[4],
+          margin_rate:        margin_deal[2],
+          capitalization:     capitalization,
+          shares_outstanding: shares_outstanding,
+          dividend_yield:     dividend_yield,
+          dps:                dps,
+          per:                per,
+          pbr:                pbr,
+          eps:                eps,
+          bps:                bps,
+          minimum_purchase:   minimum_purchase,
+          share_unit:         share_unit,
+          yearly_high:        yearly_high,
+          yearly_low:         yearly_low,
+          chart_image:        html.css("div.styleChart img")[0][:src],
         }
       end
 
@@ -143,6 +154,18 @@ module SorryYahooFinance
           :d_margin_buying=>"信用買残前週比",
           :d_margin_selling=>"信用売残前週比",
           :margin_rate=>"貸借倍率",
+          :capitalization=>"時価総額",
+          :shares_outstanding=>"発行済株式数",
+          :dividend_yield=>"配当利回り（会社予想）",
+          :dps=>"1株配当（会社予想）",
+          :per=>"PER（会社予想）",
+          :pbr=>"PBR（実績）",
+          :eps=>"EPS（会社予想）",
+          :bps=>"BPS（実績）",
+          :minimum_purchase=>"最低購入代金",
+          :share_unit=>"単元株数",
+          :yearly_high=>"年初来高値",
+          :yearly_low=>"年初来安値",
           :chart_image=>"チャート図"
         }
       end
