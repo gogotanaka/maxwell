@@ -18,7 +18,19 @@ module SorryYahooFinance
       :margin_selling,
       :d_margin_buying,
       :d_margin_selling,
-      :finish
+      :finish,
+      :capitalization,
+      :shares_outstanding,
+      :minimum_purchase,
+      :share_unit,
+      :yearly_high,
+      :yearly_low
+    ]
+
+    FLOAT_KEYS = [
+      :margin_rate,
+      :dividend_yield,
+      :dps
     ]
 
     extend HashAccessor
@@ -60,7 +72,9 @@ module SorryYahooFinance
       return_values[:price_limit] = return_values[:price_limit].to_range
 
       # to_f
-      return_values[:margin_rate] = return_values[:margin_rate].to_f
+      FLOAT_KEYS.each do |key|
+        return_values[key] = return_values[key].to_f
+      end
 
       return_values
     end
