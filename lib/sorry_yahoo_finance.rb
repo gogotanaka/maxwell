@@ -33,11 +33,10 @@ module SorryYahooFinance
   end
 
   module GET
-    def execute(codes, date)
+    def self.execute(codes, date)
       infos = codes.map { |code| Info.new(code, date) }
       infos.count == 1 ? infos.first : infos
     end
-    module_function :execute
   end
 end
 Stock = SorryYahooFinance
