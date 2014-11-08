@@ -1,42 +1,26 @@
 require "sorry_yahoo_finance/version"
-require 'sorry_yahoo_finance/info'
+require "sorry_yahoo_finance/acquirer"
+require "sorry_yahoo_finance/http_client"
 
-require 'utils/all_stock_codes'
+require "sorry_yahoo_finance/utils/all_stock_codes"
+
+require 'yaml'
 
 module SorryYahooFinance
   class << self
-    def GET(code_or_codes_or_sym, date_or_year=nil, month=nil, day=nil)
-      codes = build_codes(code_or_codes_or_sym)
-      date  = build_date(date_or_year, month, day)
-      GET.execute(codes, date)
+    # Goodby Ruby < 2.0
+    def find(*codes, date: nil, lang: :ja, format: true)
+      acquirer = Acquirer.new(codes, date)
+      output_hash = acquirer.output(lang, format)
+      output_hash.count == 1 ? output_hash.first : output_hash
     end
 
-    private
-      def build_codes(code_or_codes_or_sym)
-        case code_or_codes_or_sym
-        when :all
-          AllStockCodes::CODES
-        when Array
-          code_or_codes_or_sym
-        else
-          [code_or_codes_or_sym]
-        end
-      end
-
-      def build_date(date_or_year, month, day)
-        if month && day
-          Date.new(date_or_year, month, day)
-        else
-          date_or_year
-        end
-      end
-  end
-
-  module GET
-    def self.execute(codes, date)
-      infos = codes.map { |code| Info.new(code, date) }
-      infos.count == 1 ? infos.first : infos
+    def find_all(date: nil, lang: :ja, format: true)
+      acquirer = Acquirer.new(AllStockCodes::CODES, date)
+      acquirer.output(lang, format)
     end
   end
 end
-Stock = SorryYahooFinance
+
+# Make alias
+YahooFinance = SorryYahooFinance

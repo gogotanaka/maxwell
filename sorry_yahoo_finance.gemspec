@@ -8,12 +8,12 @@ Gem::Specification.new do |spec|
   spec.version       = SorryYahooFinance::VERSION
   spec.authors       = ["gogotanaka"]
   spec.email         = ["mail@tanakakazuki.com"]
-  spec.summary       = %q{acquire a stock infomations form yahoofinance, although I am very sorry to Yahoo!.}
-  spec.description   = %q{acquire a stock infomations form yahoofinance, although I am very sorry to Yahoo!.}
+  spec.summary       = %q{Acquire stock infomations form yahoofinance, I am so sorry to Yahoo!.}
+  spec.description   = %q{Acquire stock infomations form yahoofinance, I am so sorry to Yahoo!.}
   spec.homepage      = "http://gogotanaka.me/"
   spec.license       = "MIT"
 
-  spec.files         = `git ls-files`.split($/)
+  spec.files         = `git ls-files -z`.split("\x0")
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ["lib"]
@@ -21,8 +21,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "nokogiri"
   spec.add_dependency "openurl"
 
-  spec.add_development_dependency "bundler", "~> 1.3"
-  spec.add_development_dependency "rake", ">= 10.0.0"
-  spec.add_development_dependency "rspec"
-  spec.add_development_dependency "pry"
+  spec.add_development_dependency "bundler", "~> 1.7"
+  spec.add_development_dependency "rake", "~> 10.0"
+  spec.add_development_dependency "minitest"
 end
