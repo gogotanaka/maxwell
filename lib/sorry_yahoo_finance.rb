@@ -7,7 +7,7 @@ require "sorry_yahoo_finance/utils/all_stock_codes"
 module SorryYahooFinance
   class << self
     # Goodby Ruby < 2.0
-    def find(*codes, date: nil, lang: :ja, format: true)
+    def find(*codes, date: nil, lang: :ja, format: :hash)
       acquirer = Acquirer.new(codes, date)
       output_hash = acquirer.output(lang, format)
       output_hash.count == 1 ? output_hash.first : output_hash

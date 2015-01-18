@@ -8,6 +8,7 @@ class TestSorryYahooFinance < MiniTest::Unit::TestCase
   SHORT_JA_LABEL = ["証券コード", "銘柄名", "取引市場", "業種", "始値", "高値", "安値", "終値"]
   SHORT_EN_LABEL = [:code, :name, :market, :industry, :opening, :high, :low, :finish]
 
+  # TODO: Opposite..
   def test_find
     assert_equal(
       YahooFinance.find(8058).keys,
@@ -38,6 +39,17 @@ class TestSorryYahooFinance < MiniTest::Unit::TestCase
       YahooFinance.find(8606, 8058, date: [2014, 3, 20], format: false)[1].keys,
       SHORT_JA_LABEL
     )
+  end
 
+  def test_json
+    assert_equal(
+      "{\"証券コード\":8058,\"銘柄名\":\"三菱商事(株)\",\"取引市場\":\"東証1部\",\"業種\":\"卸売業\",\"始値\":\"1,880\",\"高値\":\"1,893\",\"安値\":\"1,860\",\"終値\":\"1,863\"}",
+      YahooFinance.find(8606, 8058, date: [2014, 3, 20], format: :json)[1]
+    )
+
+    assert_equal(
+      "{\"code\":8058,\"name\":\"三菱商事(株)\",\"market\":\"東証1部\",\"industry\":\"卸売業\",\"opening\":1880,\"high\":1893,\"low\":1860,\"finish\":1863}",
+      YahooFinance.find(8606, 8058, date: [2014, 3, 20], format: :json, lang: :en)[1]
+    )
   end
 end

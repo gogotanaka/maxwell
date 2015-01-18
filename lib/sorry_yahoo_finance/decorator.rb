@@ -1,3 +1,5 @@
+require 'json'
+
 require "sorry_yahoo_finance/utils/decorate_cons"
 
 module SorryYahooFinance
@@ -5,17 +7,19 @@ module SorryYahooFinance
     include DecorateCons
 
     def output(lang, format)
-      if format
-        @stocks.map! do |stock_hash|
-          formalize_values(stock_hash)
-        end
+      case lang
+      when :ja
+        @stocks.map! { |stock_hash| to_ja_key(stock_hash) }
       end
 
-      if lang == :ja
-        @stocks.map! do |stock_hash|
-          to_ja_key(stock_hash)
-        end
+      @stocks.map! { |stock_hash| formalize_values(stock_hash) }
+      
+      case format
+      when :hash
+      when :json
+        @stocks.map! &:to_json
       end
+
       @stocks
     end
 
