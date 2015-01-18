@@ -7,9 +7,6 @@ class TestSorryYahooFinance < MiniTest::Unit::TestCase
 
   SHORT_JA_LABEL = ["証券コード", "銘柄名", "取引市場", "業種", "始値", "高値", "安値", "終値"]
   SHORT_EN_LABEL = [:code, :name, :market, :industry, :opening, :high, :low, :finish]
-  def test_that_it_has_a_version_number
-    refute_nil ::SorryYahooFinance::VERSION
-  end
 
   def test_find
     assert_equal(

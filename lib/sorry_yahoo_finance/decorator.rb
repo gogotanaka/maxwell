@@ -3,7 +3,6 @@ require "sorry_yahoo_finance/utils/decorate_cons"
 module SorryYahooFinance
   module Decorator
     include DecorateCons
-    attr_reader :stocks
 
     def output(lang, format)
       if format
@@ -23,7 +22,7 @@ module SorryYahooFinance
     private
       def to_ja_key(stock_hash)
         Hash[
-          stock_hash.to_a.map { |ary| [JA_RABEL_HASH[ary[0]], ary[1]] }
+          stock_hash.to_a.map { |k, v| [JA_RABEL_HASH[k], v] }
         ]
       end
 

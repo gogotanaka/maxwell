@@ -1,3 +1,4 @@
+require "sorry_yahoo_finance/http_client"
 require "sorry_yahoo_finance/decorator"
 
 module SorryYahooFinance
@@ -9,10 +10,10 @@ module SorryYahooFinance
     def initialize(codes, date_or_ary)
       date = build_date(date_or_ary)
       @stocks = if codes.count == 1
-        [get_one(codes.first, date)]
-      else
-        get_some(codes, date)
-      end
+                  [get_one(codes.first, date)]
+                else
+                  get_some(codes, date)
+                end
     end
 
     def get_one(code, date)
