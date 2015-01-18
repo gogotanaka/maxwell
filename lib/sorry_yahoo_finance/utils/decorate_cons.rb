@@ -57,6 +57,7 @@ module DecorateCons
     share_unit: "単元株数",
     yearly_high: "年初来高値",
     yearly_low: "年初来安値",
-    chart_image: "チャート図"
+    chart_image: "チャート図",
+    prices: "価格"
   }
 end

@@ -13,7 +13,7 @@ module SorryYahooFinance
       end
 
       @stocks.map! { |stock_hash| formalize_values(stock_hash) }
-      
+
       case format
       when :hash
       when :json
@@ -43,6 +43,10 @@ module SorryYahooFinance
                                value.delete!(",")
                                value =~ /(\d+)～(\d+)/
                                Range.new($1.to_i,$2.to_i)
+                             elsif key == :prices
+                               prices = stock_hash[:prices]
+                               prices.select! {|price| price[:turnover] }
+                               prices.map { |price| formalize_values(price) }
                              else
                                value
                              end

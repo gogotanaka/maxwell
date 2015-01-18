@@ -1,4 +1,5 @@
 require 'yaml'
+require 'csv'
 
 $:.unshift(File.dirname(__FILE__))
 require "sorry_yahoo_finance/acquirer"
@@ -18,6 +19,13 @@ module SorryYahooFinance
       acquirer = Acquirer.new(AllStockCodes::CODES, date)
       acquirer.output(lang, format)
     end
+
+    # def csv_dump(path, code, date: nil)
+    #   CSV.open(path, "a") do |csv|
+    #     csv << [:opening, :high, :low, :finish, :turnover, :date]
+    #     find(code, date: date, lang: :en)[:prices].each { |price| csv << price.values }
+    #   end
+    # end
   end
 end
 

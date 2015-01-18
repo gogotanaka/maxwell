@@ -147,6 +147,27 @@ YahooFinance.find(8058, date: [2014, 3, 20])
   "終値"=>1863
 }
 
+# 日付を複数指定
+* `format: :json`を指定しない場合はdateの値はDateオブジェクトになります.
+* 証券コードと日付をどちらも複数していする事は出来ません.（2015-1-14現在）
+JSON.parse(YahooFinance.find(8058, date: Date.new(2014, 3, 28) .. Date.new(2014, 4, 3), format: :json, lang: :en))
+=>{
+    "code"=>8058,
+    "name"=>"三菱商事(株)",
+    "market"=>"東証1部",
+    "industry"=>"卸売業",
+    "prices"=>
+    [
+      {"opening"=>1863, "high"=>1879, "low"=>1838, "finish"=>1879, "turnover"=>5558500, "date"=>"2014-03-28"},
+      {"opening"=>1891, "high"=>1920, "low"=>1891, "finish"=>1916, "turnover"=>6580800, "date"=>"2014-03-31"},
+      {"opening"=>1915, "high"=>1925, "low"=>1903, "finish"=>1919, "turnover"=>4873600, "date"=>"2014-04-01"},
+      {"opening"=>1923, "high"=>1944, "low"=>1910, "finish"=>1921, "turnover"=>6388600, "date"=>"2014-04-02"},
+      {"opening"=>1935, "high"=>1943, "low"=>1921, "finish"=>1930, "turnover"=>5344400, "date"=>"2014-04-03"}
+    ]
+  }
+
+
+
 # ラベルを英語で
 YahooFinance.find(8606, lang: :en)
 =>{
@@ -160,7 +181,11 @@ YahooFinance.find(8606, lang: :en)
   }
 
 
-# オプション全部もり
+# フォーマットをjsonで
+YahooFinance.find(8606, format: :json, lang: :en)
+=> "{\"code\":8606,\"name\":\"みずほ証券(株)\",\"market\":\"東証1部\",\"industry\":\"証券業\",\"price\":0,\"previousprice\":165,\"opening\":0,\"high\":0,\"low\":0,\"turnover\":0,\"trading_volume\":0,\"price_limit\":\"0..0\",\"margin_buying\":1070000,\"margin_selling\":90000,\"d_margin_buying\":-3343000,\"d_margin_selling\":-748000,\"margin_rate\":11.89,\"capitalization\":262629,\"shares_outstanding\":1591688683,\"dividend_yield\":0.0,\"dps\":0.0,\"per\":\"(連) ---\",\"pbr\":\"(連) 0.49\",\"eps\":\"\\n---\",\"bps\":\"\\n(連) 334.82\",\"minimum_purchase\":165000,\"share_unit\":1000,\"yearly_high\":254,\"yearly_low\":162,\"chart_image\":\"http://chart.yahoo.co.jp/?code=8606.T&tm=1d&size=e&vip=off\"}"
+
+
 YahooFinance.find(8604, 8058, date: Date.new(2014, 12, 1), lang: :en)
 =>[
     {
@@ -184,4 +209,5 @@ YahooFinance.find(8604, 8058, date: Date.new(2014, 12, 1), lang: :en)
       :finish=>2222
     }
   ]
+
 ```
