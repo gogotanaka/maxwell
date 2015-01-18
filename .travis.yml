@@ -1,5 +1,8 @@
 language: ruby
 rvm:
+  - 2.2.0
   - 2.1.4
   - 2.0.0
   - 1.9.3
+notifications:
+  email: false
