@@ -3,7 +3,7 @@
 # バグ報告頂いてから２４時間以内に必ず直します。（という気概です）
 --------
 
-Yahoo!Japanファイナンス（http://finance.yahoo.co.jp/）
+Yahoo!Japanファイナンス ( http://finance.yahoo.co.jp/ )
 
 から株の情報をひっぱて適切なデータ型(Integer, Float, Range..). ごめんなさい、Yahoo!
 
