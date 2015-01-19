@@ -8,42 +8,41 @@ class TestSorryYahooFinance < MiniTest::Unit::TestCase
   SHORT_JA_LABEL = ["証券コード", "銘柄名", "取引市場", "業種", "始値", "高値", "安値", "終値", "出来高"]
   SHORT_EN_LABEL = [:code, :name, :market, :industry, :opening, :high, :low, :finish, :turnover]
 
-  # TODO: Opposite..
   def test_find
     assert_equal(
-      YahooFinance.find(8058).keys,
-      FULL_JA_LABEL
+      FULL_JA_LABEL,
+      YahooFinance.find(8058).keys
     )
 
     assert_equal(
-      YahooFinance.find(8058, date: Date.new(2014, 3, 20)).keys,
-      SHORT_JA_LABEL
+      {"証券コード"=>8058, "銘柄名"=>"三菱商事(株)", "取引市場"=>"東証1部", "業種"=>"卸売業", "始値"=>1880, "高値"=>1893, "安値"=>1860, "終値"=>1863, "出来高"=>7359200},
+      YahooFinance.find(8058, date: Date.new(2014, 3, 20))
     )
 
     assert_equal(
-      YahooFinance.find(8058, date: [2014, 3, 20], lang: :en).keys,
-      SHORT_EN_LABEL
+      {:code=>8058, :name=>"三菱商事(株)", :market=>"東証1部", :industry=>"卸売業", :opening=>1880, :high=>1893, :low=>1860, :finish=>1863, :turnover=>7359200},
+      YahooFinance.find(8058, date: [2014, 3, 20], lang: :en),
     )
 
     assert_equal(
-      YahooFinance.find(8606, 8058, lang: :en).first.keys,
-      FULL_EN_LABEL
+      FULL_EN_LABEL,
+      YahooFinance.find(8606, 8058, lang: :en).first.keys
     )
 
     assert_equal(
-      YahooFinance.find(8606, 8058, date: Date.new(2014, 3, 20), lang: :en).first.keys,
-      SHORT_EN_LABEL
+      [{:code=>8606, :name=>"みずほ証券(株)", :market=>"東証1部", :industry=>"証券業", :opening=>nil, :high=>nil, :low=>nil, :finish=>nil, :turnover=>nil}, {:code=>8058, :name=>"三菱商事(株)", :market=>"東証1部", :industry=>"卸売業", :opening=>1880, :high=>1893, :low=>1860, :finish=>1863, :turnover=>7359200}],
+      YahooFinance.find(8606, 8058, date: Date.new(2014, 3, 20), lang: :en),
     )
 
     assert_equal(
-      YahooFinance.find(8606, 8058, date: [2014, 3, 20], format: false)[1].keys,
-      SHORT_JA_LABEL
+       [{"証券コード"=>8606, "銘柄名"=>"みずほ証券(株)", "取引市場"=>"東証1部", "業種"=>"証券業", "始値"=>nil, "高値"=>nil, "安値"=>nil, "終値"=>nil, "出来高"=>nil}, {"証券コード"=>8058, "銘柄名"=>"三菱商事(株)", "取引市場"=>"東証1部", "業種"=>"卸売業", "始値"=>1880, "高値"=>1893, "安値"=>1860, "終値"=>1863, "出来高"=>7359200}],
+      YahooFinance.find(8606, 8058, date: [2014, 3, 20], format: false),
     )
   end
 
   def test_json
     assert_equal(
-      "{\"証券コード\":8058,\"銘柄名\":\"三菱商事(株)\",\"取引市場\":\"東証1部\",\"業種\":\"卸売業\",\"始値\":\"1,880\",\"高値\":\"1,893\",\"安値\":\"1,860\",\"終値\":\"1,863\",\"出来高\":\"7,359,200\"}",
+    "{\"証券コード\":8058,\"銘柄名\":\"三菱商事(株)\",\"取引市場\":\"東証1部\",\"業種\":\"卸売業\",\"始値\":1880,\"高値\":1893,\"安値\":1860,\"終値\":1863,\"出来高\":7359200}",
       YahooFinance.find(8606, 8058, date: [2014, 3, 20], format: :json)[1]
     )
 
@@ -71,7 +70,4 @@ class TestSorryYahooFinance < MiniTest::Unit::TestCase
     )
   end
 
-  # def test_csv_dump
-  #   YahooFinance.csv_dump("./tmp", 8058, date: Date.new(2014, 3, 28) .. Date.new(2014, 4, 3) )
-  # end
 end
