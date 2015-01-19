@@ -7,12 +7,12 @@ module SorryYahooFinance
     include DecorateCons
 
     def output(lang, format)
+      @stocks.map! { |stock_hash| formalize_values(stock_hash) }
+
       case lang
       when :ja
         @stocks.map! { |stock_hash| to_ja_key(stock_hash) }
       end
-
-      @stocks.map! { |stock_hash| formalize_values(stock_hash) }
 
       case format
       when :hash
