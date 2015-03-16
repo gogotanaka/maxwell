@@ -2,6 +2,14 @@ require 'json'
 
 require "sorry_yahoo_finance/utils/decorate_cons"
 
+unless Array.instance_methods(false).include?(:to_h)
+  class Array
+    def to_h
+      Hash[self]
+    end
+  end
+end
+
 module SorryYahooFinance
   module Decorator
     include DecorateCons
