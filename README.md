@@ -1,5 +1,7 @@
 株式の情報取得するGem作ったよ！
 
+[![Gem Version](https://badge.fury.io/rb/sorry_yahoo_finance.svg)](http://badge.fury.io/rb/sorry_yahoo_finance) [![Build Status](https://travis-ci.org/gogotanaka/sorry_yahoo_finance.svg?branch=master)](https://travis-ci.org/gogotanaka/sorry_yahoo_finance)
+
 # バグ報告頂いてから２４時間以内に必ず直します。（という気概です）
 --------
 
