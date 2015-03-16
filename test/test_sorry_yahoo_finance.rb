@@ -40,6 +40,13 @@ class TestSorryYahooFinance < MiniTest::Unit::TestCase
     )
   end
 
+  def test_find_all
+    assert_equal(
+      FULL_JA_LABEL,
+      YahooFinance.find_all.first.keys
+    )
+  end
+
   def test_json
     assert_equal(
     "{\"証券コード\":8058,\"銘柄名\":\"三菱商事(株)\",\"取引市場\":\"東証1部\",\"業種\":\"卸売業\",\"始値\":1880,\"高値\":1893,\"安値\":1860,\"終値\":1863,\"出来高\":7359200}",

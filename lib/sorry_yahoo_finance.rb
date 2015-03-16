@@ -16,8 +16,9 @@ module SorryYahooFinance
 
     # TODO: Lazy
     def find_all(date: nil, lang: :ja, format: true)
-      acquirer = Acquirer.new(AllStockCodes::CODES, date)
-      acquirer.output(lang, format)
+      AllStockCodes::CODES.lazy.map do |code|
+        Acquirer.new([code], date).output(lang, format).first
+      end
     end
 
     # def csv_dump(path, code, date: nil)
