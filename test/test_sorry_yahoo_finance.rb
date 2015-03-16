@@ -26,24 +26,24 @@ class TestSorryYahooFinance < MiniTest::Unit::TestCase
 
     assert_equal(
       FULL_EN_LABEL,
-      YahooFinance.find(8606, 8058, lang: :en).first.keys
+      YahooFinance.find(8411, 8058, lang: :en).first.keys
     )
 
     assert_equal(
-      [{:code=>8606, :name=>"みずほ証券(株)", :market=>"東証1部", :industry=>"証券業", :opening=>nil, :high=>nil, :low=>nil, :finish=>nil, :turnover=>nil}, {:code=>8058, :name=>"三菱商事(株)", :market=>"東証1部", :industry=>"卸売業", :opening=>1880, :high=>1893, :low=>1860, :finish=>1863, :turnover=>7359200}],
-      YahooFinance.find(8606, 8058, date: Date.new(2014, 3, 20), lang: :en),
+      [{:code=>8411, :name=>"(株)みずほフィナンシャルグループ", :market=>"", :industry=>"銀行業", :opening=>203, :high=>204, :low=>200, :finish=>201, :turnover=>111785700}, {:code=>8058, :name=>"三菱商事(株)", :market=>"東証1部", :industry=>"卸売業", :opening=>1880, :high=>1893, :low=>1860, :finish=>1863, :turnover=>7359200}],
+      YahooFinance.find(8411, 8058, date: Date.new(2014, 3, 20), lang: :en),
     )
 
     assert_equal(
-       [{"証券コード"=>8606, "銘柄名"=>"みずほ証券(株)", "取引市場"=>"東証1部", "業種"=>"証券業", "始値"=>nil, "高値"=>nil, "安値"=>nil, "終値"=>nil, "出来高"=>nil}, {"証券コード"=>8058, "銘柄名"=>"三菱商事(株)", "取引市場"=>"東証1部", "業種"=>"卸売業", "始値"=>1880, "高値"=>1893, "安値"=>1860, "終値"=>1863, "出来高"=>7359200}],
-      YahooFinance.find(8606, 8058, date: [2014, 3, 20], format: false),
+       [{"証券コード"=>8411, "銘柄名"=>"(株)みずほフィナンシャルグループ", "取引市場"=>"", "業種"=>"銀行業", "始値"=>203, "高値"=>204, "安値"=>200, "終値"=>201, "出来高"=>111785700}, {"証券コード"=>8058, "銘柄名"=>"三菱商事(株)", "取引市場"=>"東証1部", "業種"=>"卸売業", "始値"=>1880, "高値"=>1893, "安値"=>1860, "終値"=>1863, "出来高"=>7359200}],
+      YahooFinance.find(8411, 8058, date: [2014, 3, 20]),
     )
   end
 
   def test_json
     assert_equal(
     "{\"証券コード\":8058,\"銘柄名\":\"三菱商事(株)\",\"取引市場\":\"東証1部\",\"業種\":\"卸売業\",\"始値\":1880,\"高値\":1893,\"安値\":1860,\"終値\":1863,\"出来高\":7359200}",
-      YahooFinance.find(8606, 8058, date: [2014, 3, 20], format: :json)[1]
+      YahooFinance.find(8411, 8058, date: [2014, 3, 20], format: :json)[1]
     )
 
     assert_equal(

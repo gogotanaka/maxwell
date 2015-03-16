@@ -25,9 +25,7 @@ module SorryYahooFinance
     end
 
     def get_some(codes, dates)
-      codes.map do |code|
-        get_one(code, dates)
-      end
+      codes.map { |code| get_one(code, dates) }
     end
 
     private

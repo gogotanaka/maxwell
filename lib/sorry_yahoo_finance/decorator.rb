@@ -25,34 +25,31 @@ module SorryYahooFinance
 
     private
       def to_ja_key(stock_hash)
-        Hash[
-          stock_hash.to_a.map { |k, v| [JA_RABEL_HASH[k], v] }
-        ]
+        stock_hash.map { |k, v| [JA_RABEL_HASH[k], v] }.to_h
       end
 
       def formalize_values(stock_hash)
-        Hash[
-          stock_hash.map do |key, value|
-            formated_value = if value.nil?
-                              nil
-                             elsif INT_KEYS.include?(key)
-                              value.delete(",").to_i
-                             elsif FLOAT_KEYS.include?(key)
-                              value.to_f
-                             elsif key == :price_limit
-                               value.delete!(",")
-                               value =~ /(\d+)～(\d+)/
-                               Range.new($1.to_i,$2.to_i)
-                             elsif key == :prices
-                               prices = stock_hash[:prices]
-                               prices.select! {|price| price[:turnover] }
-                               prices.map { |price| formalize_values(price) }
-                             else
-                               value
-                             end
-            [key, formated_value]
-          end
-        ]
+        stock_hash.to_a.map { |key, value|
+          return [key, nil] if value.nil?
+
+          formated_value = case key
+                           when *INT_KEYS
+                            value.delete(",").to_i
+                           when *FLOAT_KEYS
+                            value.to_f
+                           when :price_limit
+                             value.delete!(",")
+                             value =~ /(\d+)～(\d+)/
+                             Range.new($1.to_i,$2.to_i)
+                           when :prices
+                             prices = stock_hash[:prices]
+                             prices.select! {|price| price[:turnover] }
+                             prices.map { |price| formalize_values(price) }
+                           else
+                             value
+                           end
+          [key, formated_value]
+        }.to_h
       end
 
   end
