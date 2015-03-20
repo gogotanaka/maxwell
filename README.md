@@ -1,13 +1,15 @@
-株式の情報取得するGem作ったよ！
+日本国内株式の情報取得するGem.
 
 [![Gem Version](https://badge.fury.io/rb/sorry_yahoo_finance.svg)](http://badge.fury.io/rb/sorry_yahoo_finance) [![Build Status](https://travis-ci.org/gogotanaka/sorry_yahoo_finance.svg?branch=master)](https://travis-ci.org/gogotanaka/sorry_yahoo_finance)
 
-# バグ報告頂いてから２４時間以内に必ず直します。（という気概です）
+# バグ報告頂いてから２４時間以内に必ず直します.（という気概です）
 --------
 
 Yahoo!Japanファイナンス ( http://finance.yahoo.co.jp/ )
 
-から株の情報をひっぱて適切なデータ型(Integer, Float, Range..). ごめんなさい、Yahoo!
+から株の情報を適切なデータ型(`Integer`, `Float`, `Range`..)にしてRubyの`Hash`オブジェクトで返します（ピュア！）.
+
+ごめんなさい、Yahoo!
 
 今の所
 ```
@@ -45,7 +47,7 @@ Yahoo!Japanファイナンス ( http://finance.yahoo.co.jp/ )
 ]
 ```
 
-を取ってきます。余裕があったらもっと増やします。
+を取ってきます。余裕があったらもっと増やします.
 
 インストール
 --------
@@ -123,6 +125,41 @@ YahooFinance.find(8606, 8058)
 ]
 
 
+# ラベルを英語で
+YahooFinance.find(8606, 8058, lang: :en)
+=>{
+    :code=>8606,
+    :name=>"みずほ証券(株)",
+    :market=>"東証1部",
+    :industry=>"証券業",
+    :price=>0,
+    :previousprice=>165
+    ...
+  }
+  
+# ラベルを英語で複数
+YahooFinance.find(8606, lang: :en)
+=>[
+    {
+      :code=>8606,
+      :name=>"みずほ証券(株)",
+      :market=>"東証1部",
+      :industry=>"証券業",
+      :price=>0,
+      :previousprice=>165
+      ...
+    },
+    {
+      :code=>8058,
+      :name=>"三菱商事(株)",
+      :market=>"東証1部",
+      :industry=>"卸売業",
+      :price=>2437,
+      :previousprice=>2431,
+      ...
+    }
+]
+
 # 日付を指定、その１
 YahooFinance.find(8058, date: Date.new(2014, 3, 20))
 =>{
@@ -169,25 +206,12 @@ JSON.parse(YahooFinance.find(8058, date: Date.new(2014, 3, 28) .. Date.new(2014,
   }
 
 
-
-# ラベルを英語で
-YahooFinance.find(8606, lang: :en)
-=>{
-    :code=>8606,
-    :name=>"みずほ証券(株)",
-    :market=>"東証1部",
-    :industry=>"証券業",
-    :price=>0,
-    :previousprice=>165
-    ...
-  }
-
-
 # フォーマットをjsonで
 YahooFinance.find(8606, format: :json, lang: :en)
 => "{\"code\":8606,\"name\":\"みずほ証券(株)\",\"market\":\"東証1部\",\"industry\":\"証券業\",\"price\":0,\"previousprice\":165,\"opening\":0,\"high\":0,\"low\":0,\"turnover\":0,\"trading_volume\":0,\"price_limit\":\"0..0\",\"margin_buying\":1070000,\"margin_selling\":90000,\"d_margin_buying\":-3343000,\"d_margin_selling\":-748000,\"margin_rate\":11.89,\"capitalization\":262629,\"shares_outstanding\":1591688683,\"dividend_yield\":0.0,\"dps\":0.0,\"per\":\"(連) ---\",\"pbr\":\"(連) 0.49\",\"eps\":\"\\n---\",\"bps\":\"\\n(連) 334.82\",\"minimum_purchase\":165000,\"share_unit\":1000,\"yearly_high\":254,\"yearly_low\":162,\"chart_image\":\"http://chart.yahoo.co.jp/?code=8606.T&tm=1d&size=e&vip=off\"}"
 
 
+# 全部盛り
 YahooFinance.find(8604, 8058, date: Date.new(2014, 12, 1), lang: :en)
 =>[
     {
