@@ -79,6 +79,7 @@ module SorryYahooFinance
         margin_deal = html.css("div.ymuiDotLine div.yjMS dd.ymuiEditLink strong").map(&:text)
         html.css('div#main div.main2colR div.chartFinance div.lineFi dl').map { |dl| dl.css('dd strong').text }
         capitalization, shares_outstanding, dividend_yield, dps, per, pbr, eps, bps, minimum_purchase, share_unit, yearly_high, yearly_low = html.css('div#main div.main2colR div.chartFinance div.lineFi dl').map { |dl| dl.css('dd strong').text }
+        capitalization, minimum_purchase, share_unit, yearly_high, yearly_low = html.css('div#main div.main2colR div.chartFinance div.lineFi dl').map { |dl| dl.css('dd strong').text } if html.css("div.stocksDtl dd.category").text == 'ETF'
 
         {
           code:               code,
