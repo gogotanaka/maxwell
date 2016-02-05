@@ -2,21 +2,17 @@ require "maxwell/converter"
 require 'csv'
 
 class Maxwell
-  def initialize(url, csv_path, &block)
-    csv = CSV.open(csv_path, "a")
-    block.call Maxwell::HTML(url), csv
-    csv.close
-  end
-
-  def self.HTML(url)
-    Maxwell::Converter.execute url
-  end
-end
-
-class ::Nokogiri::HTML::Document
-  def open_links(selector, &block)
-    self.css(selector).map do |a|
-      block.call Maxwell::HTML(a[:href])
+  def self.DO(config_hash, &block)
+    url, next_config = config_hash.first
+    html = Maxwell::Converter.execute url
+    if next_config.is_a?(Proc)
+      result = next_config.call(html)
+      block.call(result)
+    else
+      target, next_config = next_config.first
+      html.css(target).each do |a|
+        self.DO({ a[:href] => next_config }, &block)
+      end
     end
   end
 end
