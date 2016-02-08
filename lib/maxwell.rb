@@ -1,26 +1,37 @@
 require "maxwell/converter"
 
 class Maxwell
-  @user_agent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36"
-
   class Base
-    def self.attr_scrape(*attr_scrapes)
-      @@attr_scrapes = attr_scrapes
-    end
+    class << self
+      def attr_scrape(*attr_scrapes)
+        @acquirer_class = Class.new do
+          attr_accessor *attr_scrapes
+          @@attributes = attr_scrapes
 
-    def self.regist_strategy(link_selectore, &strategy_blk)
-      @@link_selectore = link_selectore
-      @@strategy_blk = strategy_blk
-    end
+          def initialize(nokogiri_obj)
+            @html = nokogiri_obj
+          end
 
-    def self.regist_handler(&handler_blk)
-      @@handler_blk = handler_blk
+          def result
+            @@attributes.map { |k| [k, send(k)]  }.to_h
+          end
+        end
+      end
+
+      def regist_strategy(link_selectore=nil, &strategy_blk)
+        @link_selectore = link_selectore
+        @strategy_blk = strategy_blk
+      end
+
+      def regist_handler(&handler_blk)
+        @handler_blk = handler_blk
+      end
     end
 
     def execute(root_url)
-      if @@link_selectore
+      if self.link_selectore
         html = Maxwell::Converter.execute(root_url)
-        html.css(@@link_selectore).each do |a|
+        html.css(self.link_selectore).each do |a|
           execute_for_result a[:href]
         end
       else
@@ -28,13 +39,31 @@ class Maxwell
       end
     end
 
-    private def execute_for_result(tip_url)
-      @html = Maxwell::Converter.execute(tip_url)
-      self.instance_eval &@@strategy_blk
-
-      result = @@attr_scrapes.map { |x| eval("@#{x}")  }
-      @@handler_blk.call(result) if @@handler_blk
+    def link_selectore
+      self.class.instance_eval("@link_selectore")
     end
+
+    def strategy_blk
+      self.class.instance_eval("@strategy_blk")
+    end
+
+    def handler_blk
+      self.class.instance_eval("@handler_blk")
+    end
+
+    def acquirer_class
+      self.class.instance_eval("@acquirer_class")
+    end
+
+    private
+      def execute_for_result(tip_url)
+        acquirer = acquirer_class.new(Maxwell::Converter.execute(tip_url))
+        acquirer.instance_eval &self.strategy_blk
+
+        acquirer.result.tap do |result|
+          self.handler_blk.call(result) if self.handler_blk
+        end
+      end
   end
 end
 
