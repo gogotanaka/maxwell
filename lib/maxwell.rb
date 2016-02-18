@@ -2,8 +2,8 @@ require "maxwell/converter"
 
 class Maxwell
   class Base
-    class << self
-      def attr_scrape(*attr_scrapes)
+
+      def self.attr_scrape(*attr_scrapes)
         @acquirer_class = Class.new do
           attr_accessor *attr_scrapes
           @@attributes = attr_scrapes
@@ -17,6 +17,7 @@ class Maxwell
           end
         end
       end
+    class << self
 
       def regist_strategy(link_selectore=nil, &strategy_blk)
         @link_selectore = link_selectore

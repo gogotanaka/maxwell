@@ -21,19 +21,22 @@ Or install it yourself as:
 ## Usage
 
 ```ruby
-Maxwell::DO({
-  "root url" => {
-    "css selector to links" => {
-      "css selector to links" => ->(html) {
-        html.title
-        # write parser here
-      }
-    }
-  }
-}) do |result|
-  p result
-  # write code for handling results
+class YahooScraper < Maxwell::Base
+  attr_scrape :title, :url, :address
+
+  regist_strategy("h3.slcHead.cFix a") do
+    @title   = @html.title
+    @url     = @html.css("td.sdhk jdj").text
+    @address = @html.css("table tr.ddad").text
+  end
+
+  regist_handler do |result|
+    p result
+  end
+
 end
+
+YahooScraper.new.execute("https://www.yahoo.com/")
 ```
 
 ## Development
