@@ -30,17 +30,25 @@ module Maxwell
       def regist_handler(&handler_blk)
         @handler_blk = handler_blk
       end
+
+      def use_poltergeist(value)
+        @use_poltergeist = value
+      end
     end
 
     def execute(root_url)
       if self.link_selectore
-        html = Maxwell::Converter.call(root_url)
+        html = Maxwell::Converter.call(root_url, use_poltergeist)
         html.css(self.link_selectore).each do |a|
           execute_for_result a[:href]
         end
       else
         execute_for_result root_url
       end
+    end
+
+    def use_poltergeist
+      self.class.instance_eval("@use_poltergeist")
     end
 
     def link_selectore
@@ -61,7 +69,7 @@ module Maxwell
 
     private
       def execute_for_result(tip_url)
-        acquirer = acquirer_class.new(Maxwell::Converter.call(tip_url))
+        acquirer = acquirer_class.new(Maxwell::Converter.call(tip_url, use_poltergeist))
         acquirer.instance_eval &self.strategy_blk
 
         acquirer.result.tap do |result|
