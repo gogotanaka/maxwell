@@ -1,3 +1,3 @@
-class Maxwell
+module Maxwell
   VERSION = "0.2.0"
 end

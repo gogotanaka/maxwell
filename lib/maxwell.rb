@@ -1,23 +1,26 @@
 require "maxwell/converter"
 
-class Maxwell
+module Maxwell
   class Base
-
-      def self.attr_scrape(*attr_scrapes)
+    class << self
+      def attr_scrape(*attr_scrapes)
         @acquirer_class = Class.new do
           attr_accessor *attr_scrapes
-          @@attributes = attr_scrapes
+          @attr_scrapes = attr_scrapes
+
+          def self.attr_scrapes
+            @attr_scrapes
+          end
 
           def initialize(nokogiri_obj)
             @html = nokogiri_obj
           end
 
           def result
-            @@attributes.map { |k| [k, send(k)]  }.to_h
+            self.class.attr_scrapes.map { |k| [k, send(k)]  }.to_h
           end
         end
       end
-    class << self
 
       def regist_strategy(link_selectore=nil, &strategy_blk)
         @link_selectore = link_selectore
@@ -31,7 +34,7 @@ class Maxwell
 
     def execute(root_url)
       if self.link_selectore
-        html = Maxwell::Converter.execute(root_url)
+        html = Maxwell::Converter.call(root_url)
         html.css(self.link_selectore).each do |a|
           execute_for_result a[:href]
         end
@@ -58,7 +61,7 @@ class Maxwell
 
     private
       def execute_for_result(tip_url)
-        acquirer = acquirer_class.new(Maxwell::Converter.execute(tip_url))
+        acquirer = acquirer_class.new(Maxwell::Converter.call(tip_url))
         acquirer.instance_eval &self.strategy_blk
 
         acquirer.result.tap do |result|
