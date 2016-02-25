@@ -24,7 +24,9 @@ Or install it yourself as:
 class YahooScraper < Maxwell::Base
   attr_scrape :title, :url, :address
 
-  regist_strategy("h3.slcHead.cFix a") do
+  use_poltergeist true
+
+  regist_strategy do
     @title   = @html.title
     @url     = @html.css("td.sdhk jdj").text
     @address = @html.css("table tr.ddad").text
@@ -32,8 +34,8 @@ class YahooScraper < Maxwell::Base
 
   regist_handler do |result|
     p result
+    #=> { title: "...", url: "...", address: "..." }
   end
-
 end
 
 YahooScraper.new.execute("https://www.yahoo.com/")

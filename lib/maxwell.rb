@@ -13,7 +13,7 @@ module Maxwell
           end
 
           def initialize(nokogiri_obj)
-            @html = nokogiri_obj
+            @HTML = nokogiri_obj
           end
 
           def result
