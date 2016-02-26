@@ -15,10 +15,6 @@ module Maxwell
             @attr_scrapes
           end
 
-          def initialize(nokogiri_obj)
-            @HTML = nokogiri_obj
-          end
-
           def result
             self.class.attr_scrapes.map { |k| [k, send(k)]  }.to_h
           end
@@ -42,9 +38,13 @@ module Maxwell
       end
     end
 
-    def execute(urls)
+    def initialize(urls)
+      @urls = urls
+    end
+
+    def execute
       Parallel.
-        map_with_index(urls, in_threads: concurrency || 1) { |url, id| p "scraping: #{ id + 1 }"; get_result(url, id + 1)}.
+        map_with_index(@urls, in_threads: concurrency || 1) { |url, id| p "scraping: #{ id + 1 }"; get_result(url, id + 1)}.
         each do |result|
           self.handler_blk.call(result) if self.handler_blk
         end
@@ -72,8 +72,10 @@ module Maxwell
 
     private
       def get_result(url, id)
-        acquirer = acquirer_class.new(Maxwell::Converter.call(url, use_poltergeist))
-        acquirer.instance_eval &self.strategy_blk
+        acquirer = self.acquirer_class.new
+        html = Maxwell::Converter.call(url, use_poltergeist)
+
+        acquirer.instance_exec html, &self.strategy_blk
 
         { id: id }.merge(acquirer.result)
       end

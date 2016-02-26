@@ -4,15 +4,9 @@ Maxwell makes web scraping more simpler and faster with Ruby.
 
 ## Installation
 
-Add this line to your application's Gemfile:
-
 ```ruby
-gem 'maxwell'
+echo "gem 'maxwell'" >> Gemfile && bundle
 ```
-
-And then execute:
-
-    $ bundle
 
 Or install it yourself as:
 
@@ -24,12 +18,14 @@ Or install it yourself as:
 class YahooScraper < Maxwell::Base
   attr_scrape :title, :url, :address
 
-  use_poltergeist true
+  javascript true
 
-  regist_strategy do
-    @title   = @html.title
-    @url     = @html.css("td.sdhk jdj").text
-    @address = @html.css("table tr.ddad").text
+  concurrency 4
+
+  regist_strategy do |html|
+    @title   = html.title
+    @url     = html.css("td.sdhk jdj").text
+    @address = html.css("table tr.ddad").text
   end
 
   regist_handler do |result|
@@ -38,7 +34,8 @@ class YahooScraper < Maxwell::Base
   end
 end
 
-YahooScraper.new.execute("https://www.yahoo.com/")
+scraper = YahooScraper.new("https://www.yahoo.com/")
+scraper.execute
 ```
 
 ## Development
