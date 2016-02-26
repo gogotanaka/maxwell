@@ -1,4 +1,7 @@
+require 'parallel'
+
 require "maxwell/converter"
+require "maxwell/opener"
 
 module Maxwell
   class Base
@@ -22,8 +25,7 @@ module Maxwell
         end
       end
 
-      def regist_strategy(link_selectore=nil, &strategy_blk)
-        @link_selectore = link_selectore
+      def regist_strategy(&strategy_blk)
         @strategy_blk = strategy_blk
       end
 
@@ -31,28 +33,29 @@ module Maxwell
         @handler_blk = handler_blk
       end
 
-      def use_poltergeist(value)
+      def javascript(value)
         @use_poltergeist = value
+      end
+
+      def concurrency(value)
+        @concurrency = value
       end
     end
 
-    def execute(root_url)
-      if self.link_selectore
-        html = Maxwell::Converter.call(root_url, use_poltergeist)
-        html.css(self.link_selectore).each do |a|
-          execute_for_result a[:href]
+    def execute(urls)
+      Parallel.
+        map_with_index(urls, in_threads: concurrency || 1) { |url, id| p "scraping: #{ id + 1 }"; get_result(url, id + 1)}.
+        each do |result|
+          self.handler_blk.call(result) if self.handler_blk
         end
-      else
-        execute_for_result root_url
-      end
     end
 
     def use_poltergeist
       self.class.instance_eval("@use_poltergeist")
     end
 
-    def link_selectore
-      self.class.instance_eval("@link_selectore")
+    def concurrency
+      self.class.instance_eval("@concurrency")
     end
 
     def strategy_blk
@@ -68,13 +71,11 @@ module Maxwell
     end
 
     private
-      def execute_for_result(tip_url)
-        acquirer = acquirer_class.new(Maxwell::Converter.call(tip_url, use_poltergeist))
+      def get_result(url, id)
+        acquirer = acquirer_class.new(Maxwell::Converter.call(url, use_poltergeist))
         acquirer.instance_eval &self.strategy_blk
 
-        acquirer.result.tap do |result|
-          self.handler_blk.call(result) if self.handler_blk
-        end
+        { id: id }.merge(acquirer.result)
       end
   end
 end

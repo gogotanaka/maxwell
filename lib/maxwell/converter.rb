@@ -38,7 +38,9 @@ module Maxwell
 
         session.driver.headers = { 'User-Agent' => @user_agent }
         session.visit url
-        Nokogiri::HTML(session.html)
+        Nokogiri::HTML(session.html).tap do
+          session.driver.quit
+        end
       end
     end
   end
