@@ -34,7 +34,7 @@ class YahooScraper < Maxwell::Base
   end
 end
 
-scraper = YahooScraper.new("https://www.yahoo.com/")
+scraper = YahooScraper.new ["https://www.yahoo.com/"]
 scraper.execute
 ```
 
