@@ -2,11 +2,11 @@ require 'test_helper'
 require 'csv'
 
 class HotpepperScraper < Maxwell::Base
-  attr_scrape :title, :url, :address
+  attr_accessor :title, :url, :address
 
   concurrency 5
 
-  regist_strategy do |html|
+  def parser html
     @title = html.title.gsub("｜ホットペッパービューティー", "")
 
     html.css("table.slnDataTbl.bdCell.bgThNml.fgThNml.vaThT.pCellV10H12 tr").map do |tr|
@@ -19,7 +19,7 @@ class HotpepperScraper < Maxwell::Base
     end
   end
 
-  regist_handler do |result|
+  def handler result
     p result
   end
 end
@@ -29,6 +29,5 @@ class HotpepperTest < Minitest::Test
     "http://beauty.hotpepper.jp/svcSA/macAP/salon/PN#{i}.html"
   }.map { |url| Maxwell::Opener.call(url, "h3.slcHead.cFix a") }.flatten
 
-  scraper = HotpepperScraper.new urls
-  scraper.execute
+  HotpepperScraper.execute urls
 end

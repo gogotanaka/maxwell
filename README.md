@@ -16,26 +16,25 @@ Or install it yourself as:
 
 ```ruby
 class YahooScraper < Maxwell::Base
-  attr_scrape :title, :url, :address
+  attr_accessor :title, :url, :address
 
   javascript true
 
   concurrency 4
 
-  regist_strategy do |html|
+  def parser html
     @title   = html.title
     @url     = html.css("td.sdhk jdj").text
     @address = html.css("table tr.ddad").text
   end
 
-  regist_handler do |result|
+  def handler result
     p result
     #=> { title: "...", url: "...", address: "..." }
   end
 end
 
-scraper = YahooScraper.new ["https://www.yahoo.com/"]
-scraper.execute
+YahooScraper.execute ["https://www.yahoo.com/"]
 ```
 
 ## Development
