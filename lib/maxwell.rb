@@ -1,7 +1,7 @@
 require 'parallel'
 
 require "maxwell/converter"
-require "maxwell/opener"
+require "maxwell/helper"
 
 module Maxwell
   class NoParserDefinedErr; end

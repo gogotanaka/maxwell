@@ -27,7 +27,7 @@ end
 class HotpepperTest < Minitest::Test
   urls = (1..17).map { |i|
     "http://beauty.hotpepper.jp/svcSA/macAP/salon/PN#{i}.html"
-  }.map { |url| Maxwell::Opener.call(url, "h3.slcHead.cFix a") }.flatten
+  }.map { |url| Maxwell::Helper.open_links(url, "h3.slcHead.cFix a") }.flatten
 
   HotpepperScraper.execute urls
 end
