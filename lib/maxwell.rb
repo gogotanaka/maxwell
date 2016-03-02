@@ -29,7 +29,7 @@ module Maxwell
       end
 
       def attrs
-        @attrs
+        @attrs || self.superclass.instance_eval("@attrs")
       end
 
       def javascript(value)
