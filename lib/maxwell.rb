@@ -3,6 +3,8 @@ require 'parallel'
 require "maxwell/converter"
 require "maxwell/helper"
 
+require "maxwell/overide_ohter_class"
+
 module Maxwell
   class NoParserDefinedErr; end
 
@@ -52,11 +54,5 @@ module Maxwell
     def result
       self.class.attrs.map { |k| [k, self.send(k)]  }.to_h
     end
-  end
-end
-
-class ::String
-  def trim
-    delete "\r\n\t"
   end
 end
