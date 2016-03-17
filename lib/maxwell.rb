@@ -20,7 +20,7 @@ module Maxwell
 
             scraper.parser html
 
-            scraper.handler ({ id: id + 1 }).merge(scraper.result)
+            scraper.handler ({ url: url }).merge(scraper.result)
           end
       end
 
