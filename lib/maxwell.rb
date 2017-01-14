@@ -10,18 +10,24 @@ module Maxwell
 
   class Base
     class << self
-      def execute(urls)
-        Parallel.
-          map_with_index(urls, in_threads: @concurrency || 1) do |url, id|
-            p "scraping: #{ id + 1 }"
+      def execute(args)
+        if !args[:urls].nil?
+          urls = args[:urls]
+          Parallel.
+            map_with_index(urls, in_threads: @concurrency || 1) do |url, id|
+              puts "\e[34m[#{id + 1}] scraping: #{ url }\e[0m"
 
-            scraper = self.new
-            html = Maxwell::Converter.call(url, @use_poltergeist)
+              scraper = self.new
+              html = Maxwell::Converter.call(url, @use_poltergeist)
 
-            scraper.parser html
-
-            scraper.handler ({ url: url }).merge(scraper.result)
-          end
+              scraper.parser html
+              ({ url: url }).merge(scraper.result).tap do |result_hash|
+                scraper.handler result_hash
+              end
+            end
+        else
+          raise 'You need pass an argument urls: or raw_htmls:'
+        end
       end
 
       def attr_accessor(*attrs)
